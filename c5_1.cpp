@@ -10,8 +10,8 @@ struct Pair {
     
 };
 
-
-void merge(Pair* Left, size_t left_s, Pair* Right, size_t right_s, Pair* Result) 
+template <class T>
+void merge(T* Left, size_t left_s, T* Right, size_t right_s, T* Result) 
 { 
 	size_t l_i, r_i, res_i;
 	l_i = 0;
@@ -76,8 +76,8 @@ void merge(Pair* Left, size_t left_s, Pair* Right, size_t right_s, Pair* Result)
 	}
 } 
   
-  
-void merge_sort(Pair* array, size_t size)
+template <class T>
+void merge_sort(T* array, size_t size)
 {
 	if (size <= 1)
 		return;
@@ -88,10 +88,10 @@ void merge_sort(Pair* array, size_t size)
 	merge_sort( array, first );
 	merge_sort( array + first, second );
 	
-	Pair*  tmp = new Pair[size];
+	T*  tmp = new T[size];
 	merge(array, first, array + first, second, tmp);
 	
-	memcpy(array, tmp, sizeof( Pair ) * size );
+	memcpy(array, tmp, sizeof( T ) * size );
 	delete[] tmp;
 }
 
