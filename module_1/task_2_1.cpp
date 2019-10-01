@@ -52,9 +52,13 @@ int get_nearest(long key, long *arr, long arr_size) {
         start = mid+1;
       }
     }
-  }
-  index = finish;
 
+  index = finish;
+  if (index == arr_size-1 && arr[index-1] == key)
+  {
+    index -= 1;
+  }
+}
 
   return index;
 }
