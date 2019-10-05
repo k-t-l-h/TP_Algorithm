@@ -8,13 +8,14 @@
 #include <random>
 #include <ctime>
 
+
 int random_pivot( int l, int r)
 {
 		srand(time(NULL));
 		return ( l + rand() % (r - l));
 }
-
-int partition(int* arr, int l, int r)
+template<class Compare>
+int partition(int* arr, int l, int r, Compare cmp)
 {
 	int pivot = random_pivot(l, r);
 	//std::cout << "Check "<< l << " " << r << " " << pivot << '\n';
@@ -29,7 +30,7 @@ int partition(int* arr, int l, int r)
 
 	for(j; j > l; j--)
 	{
-		if(arr[j] >= value)
+		if(cmp(arr[j], value))
 		{
 			if (j != i)
 						std::swap(arr[i], arr[j]);
@@ -45,7 +46,8 @@ int partition(int* arr, int l, int r)
 	return i;
 }
 
-void K_stat(int* array, size_t size, int k)
+template<class Compare>
+void K_stat(int* array, size_t size, int k, Compare cmp)
 {
 	int l = 0;
 	int r = size;
@@ -58,7 +60,7 @@ void K_stat(int* array, size_t size, int k)
 			 std::cout << array[i] << " "; }
 			 std::cout << "" << '\n';*/
 
-		rp = partition(array, l, r);
+		rp = partition(array, l, r, cmp);
 
 		if (rp == k)
 		{
@@ -89,7 +91,7 @@ int main(int argc, const char * argv[]) {
 		std::cin >> array[i];
 	}
 
-	K_stat(array, n, k);
+	K_stat(array, n, k, [](const int& l, const int& r) const {return l >= r;});
 
 	std::cout << array[k];
 
