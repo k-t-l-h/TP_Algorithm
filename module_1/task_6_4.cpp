@@ -91,7 +91,7 @@ int main(int argc, const char * argv[]) {
 		std::cin >> array[i];
 	}
 
-	K_stat(array, n, k, [](const int& l, const int& r) const {return l >= r;});
+	K_stat(array, n, k, [](const int& l, const int& r)  {return l >= r;});
 
 	std::cout << array[k];
 
