@@ -9,143 +9,149 @@
 */
 #include <iostream>
 
+#define START_SIZE 16
+
+struct Less
+{
+	bool operator ()(const int& l, const int& r)  {return l < r;}
+};
+
+
 template <class Compare>
 class BinaryHeap{
 
 public:
-	BinaryHeap() = delete;
-	BinaryHeap(int* arr, size_t size, Compare cmp = Compare());
-	~BinaryHeap();
 
-	int Peek();
-	void InsertHeap(int data); //добавляем в кучу
-	void PrintHeap();
+	BinaryHeap(Compare cmpf = Compare())
+	{
+		array = new int[START_SIZE];
+		arr_size = 0;
+		max_size = START_SIZE;
+		cmp = cmpf;
+	};
+
+	~BinaryHeap() {
+		delete[] array;
+	};
+
+	int Peek()	{
+		if (arr_size == 0)
+		{
+			return -1;
+		}
+		return array[0];
+	};
+
+	void InsertHeap(int data){
+
+		if (arr_size == max_size )
+		{
+			resize();
+		}
+
+		arr_size++;
+
+		array[arr_size - 1] = data;
+		ShiftUp(arr_size - 1);
+
+	}; //добавляем в кучу
+
+	void PrintHeap(){
+
+		for( int i = 0; i < arr_size; ++i ) {
+			std::cout << array[i] << " ";
+		}
+		std::cout << std::endl;
+	};
 
 	size_t arr_size; //текущий размер массива
+	size_t max_size; //максимальный размер массива
 
-	int ExtractMax();
+	int ExtractMax() {
 
-	void ShiftUp(int index); //значение уменьшилось
+		if (arr_size > 0)
+		{
+			int tmp = 0;
+			tmp = array[0];
+
+			array[0] = array[arr_size-1];
+
+			arr_size--;
+
+			if(arr_size != 0)
+			{
+				ShiftDown(0);
+			}
+
+			return tmp;
+		}
+
+		return -1;
+
+	};
+
+	void ShiftUp(int index) {
+
+		while(index > 0)
+		{
+			int parent = (index - 1) / 2;
+
+			if (array[index] <= array[parent] )
+				return;
+
+			std::swap( array[index], array[parent] );
+			index = parent;
+		}
+
+	}; //значение уменьшилось
 
 private:
 
 	Compare cmp;
 	int* array;//array
 
-	void BuildHeap(); //строим кучу
-	void ShiftDown(int index); //значение увеличилось
+	void BuildHeap() {
 
-};
-
-int BinaryHeap::ExtractMax(){
-
-	if (arr_size > 0)
-	{
-		int tmp = 0;
-		tmp = array[0];
-
-		array[0] = array[arr_size-1];
-
-		arr_size--;
-
-		if(arr_size != 0)
+		for (int i = arr_size / 2 - 1; i >= 0; --i)
 		{
-			ShiftDown(0);
+			ShiftDown(i);
 		}
 
-		return tmp;
-	}
+	}; //строим кучу
+	void ShiftDown(int index){
+		int left = 2*index + 1;
+		int right = 2*index + 2;
 
-	return -1;
+		int largest = index;
 
-}
+		if (cmp(left, arr_size) && array[left] > array[largest])
+		{
+			largest = left;
+		}
 
-int BinaryHeap::Peek(){
-	if (arr_size == 0)
-	{
-		return -1;
-	}
-	return array[0];
-}
+		if (cmp(right, arr_size) && array[right] > array[largest])
+		{
+			largest = right;
+		}
 
-template <class Compare>
-void BinaryHeap::PrintHeap() {
+		if (largest != index)
+		{
+			std::swap(array[index], array[largest]);
+			ShiftDown(largest);
+		}
 
-	for( int i = 0; i < arr_size; ++i ) {
-		std::cout << array[i] << " ";
-	}
-	std::cout << std::endl;
-};
-template <class Compare>
-void BinaryHeap::InsertHeap(int data){
+	}; //значение увеличилось
 
-	arr_size++;
 
-	array[arr_size - 1] = data;
-	ShiftUp(arr_size - 1);
-
-};
-template <class Compare>
-void BinaryHeap::BuildHeap(){
-
-	for (int i = arr_size / 2 - 1; i >= 0; --i)
-	{
-		ShiftDown(i);
+	void resize(){
+		int* tmp = new int[max_size*2];
+		std::copy(array, array + arr_size, tmp);
+		delete[] array;
+		array = tmp;
+    	max_size *= 2;
 	}
 
 };
-template <class Compare>
-void BinaryHeap::ShiftDown(int index){
-	int left = 2*index + 1;
-	int right = 2*index + 2;
-
-	int largest = index;
-
-	if (cmp(left, arr_size) && array[left] > array[largest])
-	{
-		largest = left;
-	}
-
-	if (cmp(right, arr_size) && array[right] > array[largest])
-	{
-		largest = right;
-	}
-
-	if (largest != index)
-	{
-		std::swap(array[index], array[largest]);
-		ShiftDown(largest);
-	}
-
-};
-template <class Compare>
-void BinaryHeap::ShiftUp(int index){
-
-	while(index > 0)
-	{
-		int parent = (index - 1) / 2;
-
-		if (array[index] <= array[parent] )
-			return;
-
-		std::swap( array[index], array[parent] );
-		index = parent;
-	}
-
-};
-template <class Compare>
-BinaryHeap::BinaryHeap(int* arr, size_t size){
-
-	array = std::move(arr);
-	arr_size = size;
-	BuildHeap();
-};
-template <class Compare>
-BinaryHeap::~BinaryHeap(){
-	delete[] array;
-};
-
-
 
 int main(int argc, const char * argv[]) {
 
@@ -153,15 +159,16 @@ int main(int argc, const char * argv[]) {
 	int value = 0;
 
 	std::cin >> n;
-	int* tmp = new int[n];
+
+	BinaryHeap<Less> heap;
 
 	for (int i = 0; i < n; ++i){
 
-		std::cin >> tmp[i];
-
+		std::cin >> value;
+		heap.InsertHeap(value);
 	}
+	//
 
-	BinaryHeap heap<[](const int& l, const int& r) {return l < r;}>(tmp, n);
 
 	int K = 0;
 	std::cin >> K;
