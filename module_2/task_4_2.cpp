@@ -158,6 +158,17 @@ private:
 		return check_balance(node);
 	};
 
+	Node* maxNode(Node* node){
+		Node* current = node;
+		while (current->right) {
+			current = current->right;
+		}
+
+		return current;
+	};
+
+
+
 	Node* remove(Node* node, int data)
 	{
 		if (!node)
@@ -175,20 +186,26 @@ private:
 
 		if (node->data == data)
 		{
-			Node* l = node->left;
-			Node* r = node->right;
-			delete node;
+			if (!(node->left) || !(node->right)){
+			Node* check = node->left? node->left : node->right;
+			if(check){
+				*node = *check;
+			}else{
+				check = node;
+				node = nullptr;
+			}
+			delete check;}
 
-			if (!l)
-				return r;
-
-			Node* tmp = find_min(l);
-			tmp->left = remove_min(l);
-			tmp->right = r;
-
-			return check_balance(tmp);
+			else{
+				Node* check = maxNode(node->left);
+				node->data = check->data;
+				node->left = remove(node->left, check->data);
+			}
 		}
 
+		if (!node) {
+			return node;
+		}
 		return check_balance(node);
 	};
 
