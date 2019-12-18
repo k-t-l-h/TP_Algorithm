@@ -20,7 +20,7 @@ struct IGraph{
 
 class WeightGraph : public IGraph{
 public:
-    WeightGraph(int n) : graf(n), gsize(n), maxw(0) {}
+    explicit WeightGraph(int n) : graf(n), gsize(n), maxw(0) {}
     //explicit WeightGraph(const std::shared_ptr<IGraph>& igraph);
     void AddEdge(int from, int to, int weight);
     int EdgeWeight(int from, int to);
@@ -39,33 +39,45 @@ private:
     int gsize;
 };
 
-
+//прошло 8 тест
 void WeightGraph::AddEdge(int from, int to, int weight){
 
-    graf[from].insert({to, weight});
+    if (validate(from) && validate(to)){
+      auto it = graf[from].find(to);
+
+      if (it == graf[from].end()){
+        graf[from].insert({to, weight});
+      }
+      else{
+        if (it->second > weight){
+            maxw -= it->second;
+            it->second = weight;
+          }
+      }
+      maxw += weight;
+    }
 };
 
+//прошло 8 тест
 int WeightGraph::EdgeWeight(int from, int to){
 
   auto it = graf[from].find(to);
-  if (it == graf[from].end() ){
-    return -1;
-  }
-  else{
-    return it->second;
-  }
+  return it != graf[from].end() ? it->second : -1;
 };
+
 
 int WeightGraph::VerticesCount() const{
 	return gsize;
 };
 
+
 vector<int> WeightGraph::GetNextVertices(int vertex) const {
-  std::vector<int> vert;
-  for (const auto &it : graf[vertex]) {
-      vert.push_back(it.first);
-  }
-  return vert;
+    vector<int> result;
+
+    for (const auto &it : graf[vertex]) {
+        result.push_back(it.first);
+    }
+    return result;
 }
 
 
