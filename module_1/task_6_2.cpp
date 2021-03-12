@@ -13,12 +13,12 @@
 using namespace std;
 
 struct GE {
-    bool operator()(const int& l, const int& r) { return l >= r; }
+    bool operator()(const int& l, const int& r) { return l > r; }
 };
 
-unsigned int median_of_three(int* arr, unsigned int start, unsigned int end) {
+int median_of_three(int* arr, int start, int end) {
     int middle = start + (end - start) / 2;
-
+    end -= 1;
     if ((arr[start] > arr[middle]) ^ (arr[start] > arr[end])) {
         return start;
     } else if ((arr[middle] < arr[start]) ^ (arr[middle] < arr[end])) {
@@ -29,15 +29,16 @@ unsigned int median_of_three(int* arr, unsigned int start, unsigned int end) {
 }
 
 template <class Comparator>
-int partition(int* arr, unsigned int start, unsigned int end, Comparator cmp) {
-    unsigned int pivot = median_of_three(arr, start, end);
+int partition(int* arr, int start, int end, Comparator cmp) {
+    int pivot = median_of_three(arr, start, end);
 
     int value = arr[pivot];
 
-    if (pivot != start) {
+    if (pivot != start){
         swap(arr[pivot], arr[start]);
         pivot = start;
     }
+
 
     //проход двух итераторов от конца к началу
     int i = end - 1;
@@ -60,11 +61,11 @@ int partition(int* arr, unsigned int start, unsigned int end, Comparator cmp) {
 }
 
 template <class Comparator>
-void K_stat(int* array, unsigned int size, unsigned int k, Comparator cmp) {
-    unsigned int start = 0;
-    unsigned int end = size;
+void K_stat(int* array, int size, int k, Comparator cmp) {
+    int start = 0;
+    int end = size;
 
-    unsigned  int pivot = partition(array, start, end, cmp);
+    int pivot = partition(array, start, end, cmp);
 
     while (pivot != k) {
         if (pivot > k) {
@@ -77,7 +78,7 @@ void K_stat(int* array, unsigned int size, unsigned int k, Comparator cmp) {
 }
 
 int main(int argc, const char* argv[]) {
-    unsigned int n, k;
+    int n, k;
     cin >> n >> k;
 
     int* arr = new int[n];
@@ -86,8 +87,9 @@ int main(int argc, const char* argv[]) {
     }
 
     K_stat(arr, n, k, GE());
-
     cout << arr[k];
+
+    delete[] arr;
 
     return 0;
 }
