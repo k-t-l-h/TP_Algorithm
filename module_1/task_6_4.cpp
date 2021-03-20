@@ -8,93 +8,81 @@
 #include <random>
 #include <ctime>
 
+using namespace std;
+
+struct GE {
+  bool operator()(const int& l, const int& r) { return l > r; }
+};
 
 int random_pivot( int l, int r)
 {
-		srand(time(NULL));
-		return ( l + rand() % (r - l));
-}
-template<class Compare>
-int partition(int* arr, int l, int r, Compare cmp)
-{
-	int pivot = random_pivot(l, r);
-	//std::cout << "Check "<< l << " " << r << " " << pivot << '\n';
-	int value = arr[pivot];
-	if (pivot != l){
-		std::swap(arr[pivot], arr[l]);
-		pivot = l;
-	}
-	//отсчёт с конца
-	int i = r - 1;
-	int j = r - 1;
-
-	for(j; j > l; j--)
-	{
-		if(cmp(arr[j], value))
-		{
-			if (j != i)
-						std::swap(arr[i], arr[j]);
-			i--;
-		}
-	}
-
-	if (pivot != i)
-	{
-		std::swap(arr[i], arr[pivot]);
-	}
-
-	return i;
+  srand(time(NULL));
+  return ( l + rand() % (r - l));
 }
 
-template<class Compare>
-void K_stat(int* array, size_t size, int k, Compare cmp)
-{
-	int l = 0;
-	int r = size;
 
-	int rp = 0;
+template <class Comparator>
+int partition(int* arr, int start, int end, Comparator cmp) {
+  int pivot = random_pivot(start, end);
 
-	while(l < r)
-	{
-		/*for(size_t i = 0; i < size; i++){
-			 std::cout << array[i] << " "; }
-			 std::cout << "" << '\n';*/
+  int value = arr[pivot];
 
-		rp = partition(array, l, r, cmp);
+  if (pivot != start){
+    swap(arr[pivot], arr[start]);
+    pivot = start;
+  }
 
-		if (rp == k)
-		{
-			return;
-		}
 
-		if (rp > k)
-		{
-			r = rp;
-		}
-		else
-		{
-			l = rp + 1;
-		}
-	}
+  //проход двух итераторов от конца к началу
+  int i = end - 1;
+  int j = end - 1;
 
+  for (j; j > start; j--) {
+    if (cmp(arr[j], value)) {
+      if (j != i) {
+        swap(arr[i], arr[j]);
+      }
+      i--;
+    }
+  }
+
+  if (pivot != i) {
+    swap(arr[i], arr[pivot]);
+  }
+
+  return i;
 }
 
-int main(int argc, const char * argv[]) {
+template <class Comparator>
+void K_stat(int* array, int size, int k, Comparator cmp) {
+  int start = 0;
+  int end = size;
 
-	int n, k;
-	std::cin >> n >> k;
+  int pivot = partition(array, start, end, cmp);
 
+  while (pivot != k) {
+    if (pivot > k) {
+      end = pivot;
+    } else {
+      start = pivot + 1;
+    }
+    pivot = partition(array, start, end, cmp);
+  }
+}
 
-	int* array = new int[n];
-	for (int i = 0; i < n; i++)
-	{
-		std::cin >> array[i];
-	}
+int main(int argc, const char* argv[]) {
+  int n, k;
+  cin >> n >> k;
 
-	K_stat(array, n, k, [](const int& l, const int& r)  {return l >= r;});
+  int* arr = new int[n];
+  for (int i = 0; i < n; ++i) {
+    cin >> arr[i];
+  }
 
-	std::cout << array[k];
+  K_stat(arr, n, k, GE());
+  cout << arr[k];
 
-	return 0;
+  delete[] arr;
 
+  return 0;
 }
