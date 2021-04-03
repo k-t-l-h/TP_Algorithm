@@ -87,7 +87,10 @@ void merge_sort(T* array, int size, Comparator cmp){
 
   T* merged = new T[size];
   merge(array, left, array + left, right, merged, cmp);
-  memcpy(array, merged, sizeof( T ) * size );
+
+  for (int i = 0; i < size; ++i) {
+    array[i] = merged[i];
+  }
   delete[] merged;
 }
 
