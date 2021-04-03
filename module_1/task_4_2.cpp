@@ -134,7 +134,7 @@ private:
 
 };
 
-/*
+
 template<class Comparator>
 int get_sum(BinaryHeap<Comparator> *heap) {
   int sum = 0;
@@ -150,7 +150,7 @@ int get_sum(BinaryHeap<Comparator> *heap) {
 
   return sum;
 }
- */
+
 
 int main() {
     //собираем кучу
@@ -165,17 +165,7 @@ int main() {
         heap.Insert(value);
     }
 
-    int sum = 0;
-    //до тех пор, пока куча не пуста
-    //здесь как минимум 2 объекта
-    while (heap.real_size > 1) {
-      int a = heap.Extract();
-      int b = heap.Extract();
-
-      sum += a + b;
-      heap.Insert(a+b);
-    }
-    cout << sum;
+    cout << get_sum(&heap);
 
     return 0;
 
