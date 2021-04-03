@@ -27,11 +27,9 @@ class BinaryHeap{
 public:
 
     BinaryHeap(Comparator comparator = Comparator()):
-            max_size(DEFAULT_SIZE), real_size(0)
-    {
-        heap_array = new int[DEFAULT_SIZE];
-        cmp = comparator;
-    };
+            max_size(0), real_size(0), heap_array(nullptr){
+            cmp = comparator;
+            };
     ~BinaryHeap(){
         delete[] heap_array;
     };
@@ -121,6 +119,12 @@ private:
     };
 
     void Resize() {
+        if (heap_array == nullptr) {
+          heap_array = new int[DEFAULT_SIZE];
+          max_size = DEFAULT_SIZE;
+          return;
+        }
+
         int* new_heap_array = new int[max_size<<1];
         copy(heap_array, heap_array + real_size, new_heap_array);
         delete[] heap_array;
@@ -130,12 +134,28 @@ private:
 
 };
 
+/*
+template<class Comparator>
+int get_sum(BinaryHeap<Comparator> *heap) {
+  int sum = 0;
+  //до тех пор, пока куча не пуста
+  //здесь как минимум 2 объекта
+  while (heap->real_size > 1) {
+    int a = heap->Extract();
+    int b = heap->Extract();
+
+    sum += a + b;
+    heap->Insert(a+b);
+  }
+
+  return sum;
+}
+ */
+
 int main() {
     //собираем кучу
     short int n = 0; //n < 100
     int value = 0; //<= 1 000 000 000
-
-    int sum = 0;
 
     BinaryHeap<Less> heap;
 
@@ -145,16 +165,16 @@ int main() {
         heap.Insert(value);
     }
 
+    int sum = 0;
     //до тех пор, пока куча не пуста
     //здесь как минимум 2 объекта
     while (heap.real_size > 1) {
-        int a = heap.Extract();
-        int b = heap.Extract();
+      int a = heap.Extract();
+      int b = heap.Extract();
 
-        sum += a + b;
-        heap.Insert(a+b);
+      sum += a + b;
+      heap.Insert(a+b);
     }
-
     cout << sum;
 
     return 0;
