@@ -20,14 +20,7 @@ public:
     Queue& operator=(const Queue&) = delete;
     Queue& operator=(Queue&&) = delete;
 
-    Queue(int size) : buffer_size(size), head(0), tail(0), size(0) {
-        buffer = new int[buffer_size];
-    }
-
-    Queue() : buffer_size(DEFAULT_SIZE), head(0), tail(0), size(0) {
-        buffer = new int[DEFAULT_SIZE];
-    }
-
+    Queue() : buffer_size(0), head(0), tail(0), size(0), buffer(nullptr) {}
     void push_back(int value);
     int pop_front();
 
@@ -46,6 +39,11 @@ private:
 
 //увеличиваем наш буффер
 void Queue::resize() {
+    if (buffer == nullptr) {
+      buffer = new int[DEFAULT_SIZE];
+      buffer_size = DEFAULT_SIZE;
+      return;
+    }
     //увеличиваем сразу в два раза
     int new_size = buffer_size << 1;
 
