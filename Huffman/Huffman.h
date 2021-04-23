@@ -14,4 +14,6 @@ interface IOutputStream {
 
 void Encode(IInputStream& original, IOutputStream& compressed);
 
+void Decode(IInputStream& compressed, IOutputStream& original);
+
 #endif // TP_ALGO_HUFFMAN_H

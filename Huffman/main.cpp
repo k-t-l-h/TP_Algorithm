@@ -1,4 +1,5 @@
 #include "Huffman.h"
+#include <iostream>
 #include <string>
 
 class Stream: public IInputStream, public IOutputStream{
@@ -15,15 +16,21 @@ public:
   void Write(byte value) {
     str += value;
   }
+  std::string Full() {
+    return str;
+  }
 private:
   std::string str;
   int iter;
 };
 
 int main() {
-  Stream str("feecccbbbbdddddaaaaaa");
+  Stream str("ABACA");
   Stream str2("");
+  Stream str3("");
   Encode((IInputStream &)str, (IOutputStream &)str2);
-
+  std::cout << str2.Full() << std::endl;
+  Decode( (IInputStream &)str2, (IOutputStream &)str3);
+  std::cout << str3.Full();
   return 0;
 }
